@@ -59,6 +59,25 @@ TRADE_TYPES = [
 ]
 
 # ============================================================
+# SAMPLE FEEDBACK
+# ============================================================
+
+FEEDBACK_COMMENTS = [
+    "okay experience overall.",
+    "okay deal, slow responses.",
+    "great experience overall.",
+    "fast responses.",
+    "smooth trade.",
+    "quick and easy trade.",
+    "good service.",
+    "everything went smoothly.",
+    "easy trade, no problems.",
+    "fast and simple.",
+    "good deal.",
+    "reliable service."
+]
+
+# ============================================================
 # BOT SETUP
 # ============================================================
 
@@ -189,6 +208,26 @@ async def send_trade_activity(guild):
     trade_type = random.choice(TRADE_TYPES)
 
     # --------------------------------------------------------
+    # RANDOM SAMPLE FEEDBACK
+    # --------------------------------------------------------
+
+    feedback_1 = random.choice(FEEDBACK_COMMENTS)
+
+    available_feedback = [
+        comment
+        for comment in FEEDBACK_COMMENTS
+        if comment != feedback_1
+    ]
+
+    feedback_2 = random.choice(available_feedback)
+
+    stars_1 = random.randint(3, 5)
+    stars_2 = random.randint(3, 5)
+
+    star_text_1 = "⭐" * stars_1
+    star_text_2 = "⭐" * stars_2
+
+    # --------------------------------------------------------
     # EMBED
     # --------------------------------------------------------
 
@@ -204,11 +243,19 @@ async def send_trade_activity(guild):
         )
     )
 
+    # --------------------------------------------------------
+    # TRADE TYPE
+    # --------------------------------------------------------
+
     embed.add_field(
         name="Trade Type",
         value=f"`{trade_type}`",
         inline=False
     )
+
+    # --------------------------------------------------------
+    # USERS
+    # --------------------------------------------------------
 
     embed.add_field(
         name="Users",
@@ -220,13 +267,40 @@ async def send_trade_activity(guild):
         inline=False
     )
 
+    # --------------------------------------------------------
+    # STATUS
+    # --------------------------------------------------------
+
     embed.add_field(
         name="Status",
         value="✅ Completed",
         inline=False
     )
 
+    # --------------------------------------------------------
+    # FEEDBACK
+    # --------------------------------------------------------
+
+    embed.add_field(
+        name="Sample Feedback",
+        value=(
+            f"{star_text_1}\n"
+            f"{feedback_1}\n\n"
+            f"{star_text_2}\n"
+            f"{feedback_2}"
+        ),
+        inline=False
+    )
+
+    # --------------------------------------------------------
+    # PHOTO
+    # --------------------------------------------------------
+
     embed.set_image(url=photo)
+
+    # --------------------------------------------------------
+    # FOOTER
+    # --------------------------------------------------------
 
     embed.set_footer(
         text="Trade Activity • Middleman Service"
