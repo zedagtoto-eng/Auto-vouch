@@ -1,0 +1,378 @@
+import os
+import asyncio
+import random
+import discord
+from discord.ext import commands
+
+# ============================================================
+# CONFIG
+# ============================================================
+
+TOKEN = os.getenv("DISCORD_TOKEN")
+
+# YOUR DISCORD USER ID
+OWNER_ID = 494442502632243200
+
+# ROLE IDS
+SELLER_ROLE_ID = 1541096480146853968
+BUYER_ROLE_ID = 1541096480146853968
+MIDDLEMAN_ROLE_ID = 1541096469669351424
+
+# CHANNEL WHERE THE AUTOMATIC POSTS GO
+VOUCH_CHANNEL_ID = 1541096647218692176
+
+# 5 MINUTES
+VOUCH_COOLDOWN = 5 * 60
+
+# ============================================================
+# RANDOM PHOTOS
+# ============================================================
+
+VOUCH_PHOTOS = [
+    "https://i.imgur.com/ggWdeJm.png",
+    "https://i.imgur.com/NkISKXf.png",
+    "YOUR_IMAGE_URL_3",
+    "YOUR_IMAGE_URL_4",
+    "YOUR_IMAGE_URL_5"
+]
+
+# ============================================================
+# BOT SETUP
+# ============================================================
+
+intents = discord.Intents.default()
+
+intents.guilds = True
+intents.members = True
+intents.message_content = True
+
+bot = commands.Bot(
+    command_prefix="!",
+    intents=intents
+)
+
+vouch_running = False
+vouch_task = None
+
+# ============================================================
+# READY
+# ============================================================
+
+@bot.event
+async def on_ready():
+    print(f"✅ {bot.user} is online!")
+    print(f"Bot ID: {bot.user.id}")
+
+
+# ============================================================
+# FIND RANDOM MEMBER WITH ROLE
+# ============================================================
+
+def random_member_with_role(guild, role_id, exclude_ids=None):
+
+    role = guild.get_role(role_id)
+
+    if role is None:
+        return None
+
+    if exclude_ids is None:
+        exclude_ids = set()
+
+    members = [
+        member
+        for member in role.members
+        if not member.bot
+        and member.id not in exclude_ids
+    ]
+
+    if not members:
+        return None
+
+    return random.choice(members)
+
+
+# ============================================================
+# SEND AUTOMATIC TRADE ACTIVITY
+# ============================================================
+
+async def send_trade_activity(guild):
+
+    channel = guild.get_channel(VOUCH_CHANNEL_ID)
+
+    if channel is None:
+        print("❌ Vouch channel not found.")
+        return
+
+    # --------------------------------------------------------
+    # RANDOM SELLER
+    # --------------------------------------------------------
+
+    seller = random_member_with_role(
+        guild,
+        SELLER_ROLE_ID
+    )
+
+    if seller is None:
+        print("❌ No Seller found.")
+        return
+
+    # --------------------------------------------------------
+    # RANDOM BUYER
+    # --------------------------------------------------------
+
+    buyer = random_member_with_role(
+        guild,
+        BUYER_ROLE_ID,
+        {seller.id}
+    )
+
+    if buyer is None:
+        print("❌ No Buyer found.")
+        return
+
+    # --------------------------------------------------------
+    # RANDOM MIDDLEMAN
+    # --------------------------------------------------------
+
+    middleman = random_member_with_role(
+        guild,
+        MIDDLEMAN_ROLE_ID,
+        {seller.id, buyer.id}
+    )
+
+    if middleman is None:
+        print("❌ No Middleman found.")
+        return
+
+    # --------------------------------------------------------
+    # RANDOM PHOTO
+    # --------------------------------------------------------
+
+    photo = random.choice(VOUCH_PHOTOS)
+
+    # --------------------------------------------------------
+    # EMBED
+    # --------------------------------------------------------
+
+    embed = discord.Embed(
+        title="🤝 Trade Activity",
+        description=(
+            "A trade activity has been recorded."
+        ),
+        color=discord.Color.from_rgb(
+            255,
+            105,
+            180
+        )
+    )
+
+    embed.add_field(
+        name="Trade Type",
+        value="`Ingame ↔ Ingame`",
+        inline=False
+    )
+
+    embed.add_field(
+        name="Users",
+        value=(
+            f"**Seller:** {seller.mention}\n"
+            f"**Buyer:** {buyer.mention}\n"
+            f"**MM:** {middleman.mention}"
+        ),
+        inline=False
+    )
+
+    embed.add_field(
+        name="Status",
+        value="✅ Completed",
+        inline=False
+    )
+
+    embed.set_image(url=photo)
+
+    embed.set_footer(
+        text="Trade Activity • Middleman Service"
+    )
+
+    # --------------------------------------------------------
+    # PING SELLER + BUYER + MIDDLEMAN
+    # --------------------------------------------------------
+
+    content = (
+        f"{seller.mention} "
+        f"{buyer.mention} "
+        f"{middleman.mention}"
+    )
+
+    await channel.send(
+        content=content,
+        embed=embed,
+        allowed_mentions=discord.AllowedMentions(
+            users=True
+        )
+    )
+
+    print(
+        f"Trade activity sent: "
+        f"{seller} / {buyer} / {middleman}"
+    )
+
+
+# ============================================================
+# AUTOMATIC LOOP
+# ============================================================
+
+async def automatic_vouch_loop(guild):
+
+    global vouch_running
+
+    while vouch_running:
+
+        try:
+
+            await send_trade_activity(guild)
+
+            # WAIT 5 MINUTES
+            await asyncio.sleep(VOUCH_COOLDOWN)
+
+        except asyncio.CancelledError:
+
+            break
+
+        except Exception as e:
+
+            print(f"❌ Automatic system error: {e}")
+
+            await asyncio.sleep(10)
+
+
+# ============================================================
+# START VOUCH SYSTEM
+# ============================================================
+
+@bot.command(name="startvouch")
+async def start_vouch(ctx):
+
+    global vouch_running
+    global vouch_task
+
+    # ONLY BOT OWNER
+    if ctx.author.id != OWNER_ID:
+
+        await ctx.send(
+            "❌ Only the bot owner can use this command."
+        )
+
+        return
+
+    if vouch_running:
+
+        await ctx.send(
+            "⚠️ The automatic system is already running."
+        )
+
+        return
+
+    vouch_running = True
+
+    await ctx.send(
+        "🟢 **Automatic Trade Activity Started**\n"
+        "A new activity will be posted every **5 minutes**."
+    )
+
+    vouch_task = asyncio.create_task(
+        automatic_vouch_loop(ctx.guild)
+    )
+
+
+# ============================================================
+# STOP VOUCH SYSTEM
+# ============================================================
+
+@bot.command(name="stopvouch")
+async def stop_vouch(ctx):
+
+    global vouch_running
+    global vouch_task
+
+    # ONLY BOT OWNER
+    if ctx.author.id != OWNER_ID:
+
+        await ctx.send(
+            "❌ Only the bot owner can use this command."
+        )
+
+        return
+
+    if not vouch_running:
+
+        await ctx.send(
+            "⚠️ The automatic system isn't running."
+        )
+
+        return
+
+    vouch_running = False
+
+    if vouch_task:
+
+        vouch_task.cancel()
+        vouch_task = None
+
+    await ctx.send(
+        "🔴 **Automatic Trade Activity Stopped**"
+    )
+
+
+# ============================================================
+# STATUS
+# ============================================================
+
+@bot.command(name="vouchstatus")
+async def vouch_status(ctx):
+
+    if ctx.author.id != OWNER_ID:
+
+        await ctx.send(
+            "❌ Only the bot owner can use this command."
+        )
+
+        return
+
+    if vouch_running:
+
+        await ctx.send(
+            "🟢 **Status:** Running\n"
+            "⏱️ **Interval:** 5 minutes"
+        )
+
+    else:
+
+        await ctx.send(
+            "🔴 **Status:** Stopped"
+        )
+
+
+# ============================================================
+# ERROR HANDLER
+# ============================================================
+
+@bot.event
+async def on_command_error(ctx, error):
+
+    if isinstance(
+        error,
+        commands.CommandNotFound
+    ):
+        return
+
+    print(
+        f"Command error: {error}"
+    )
+
+
+# ============================================================
+# RUN
+# ============================================================
+
+bot.run(TOKEN)
