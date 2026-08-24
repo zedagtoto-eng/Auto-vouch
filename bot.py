@@ -52,10 +52,7 @@ TRADE_TYPES = [
     "Cash App ↔ Ingame",
     "Gift Card ↔ Ingame",
     "Ingame ↔ Ingame",
-    "LTC ↔ Robux",
-    "Robux ↔ Gift Card",
-    "LTC ↔ Robux",
-    "Gift Card ↔ Robux"
+   
 ]
 
 # ============================================================
