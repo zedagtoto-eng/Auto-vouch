@@ -25,15 +25,37 @@ VOUCH_CHANNEL_ID = 1541096647218692176
 VOUCH_COOLDOWN = 5 * 60
 
 # ============================================================
-# RANDOM PHOTOS
+# VOUCH PHOTOS
 # ============================================================
 
 VOUCH_PHOTOS = [
     "https://i.imgur.com/ggWdeJm.png",
     "https://i.imgur.com/NkISKXf.png",
-    "YOUR_IMAGE_URL_3",
-    "YOUR_IMAGE_URL_4",
-    "YOUR_IMAGE_URL_5"
+    "https://i.imgur.com/hJ7AS11.png",
+    "https://i.imgur.com/JizEvDP.png",
+    "https://i.imgur.com/fTWzkr3.png",
+    "https://i.imgur.com/gK7QXeO.png",
+    "https://i.imgur.com/7SUZCY8.png",
+    "https://i.imgur.com/h1wbgMx.png",
+    "https://i.imgur.com/OJZPuds.png",
+    "https://i.imgur.com/YT57LBt.png"
+]
+
+# ============================================================
+# TRADE TYPES
+# ============================================================
+
+TRADE_TYPES = [
+    "LTC ↔ Ingame",
+    "Robux ↔ Ingame",
+    "PayPal ↔ Ingame",
+    "Cash App ↔ Ingame",
+    "Gift Card ↔ Ingame",
+    "Ingame ↔ Ingame",
+    "LTC ↔ Robux",
+    "Robux ↔ Gift Card",
+    "LTC ↔ Robux",
+    "Gift Card ↔ Robux"
 ]
 
 # ============================================================
@@ -148,7 +170,23 @@ async def send_trade_activity(guild):
     # RANDOM PHOTO
     # --------------------------------------------------------
 
-    photo = random.choice(VOUCH_PHOTOS)
+    valid_photos = [
+        photo
+        for photo in VOUCH_PHOTOS
+        if photo.startswith("http")
+    ]
+
+    if not valid_photos:
+        print("❌ No valid vouch photos found.")
+        return
+
+    photo = random.choice(valid_photos)
+
+    # --------------------------------------------------------
+    # RANDOM TRADE TYPE
+    # --------------------------------------------------------
+
+    trade_type = random.choice(TRADE_TYPES)
 
     # --------------------------------------------------------
     # EMBED
@@ -168,7 +206,7 @@ async def send_trade_activity(guild):
 
     embed.add_field(
         name="Trade Type",
-        value="`Ingame ↔ Ingame`",
+        value=f"`{trade_type}`",
         inline=False
     )
 
@@ -214,7 +252,7 @@ async def send_trade_activity(guild):
 
     print(
         f"Trade activity sent: "
-        f"{seller} / {buyer} / {middleman}"
+        f"{seller} / {buyer} / {middleman} / {trade_type}"
     )
 
 
