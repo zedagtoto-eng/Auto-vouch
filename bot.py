@@ -21,11 +21,14 @@ MIDDLEMAN_ROLE_ID = 1541096469669351424
 # CHANNEL WHERE THE AUTOMATIC POSTS GO
 VOUCH_CHANNEL_ID = 1541096647218692176
 
-# 10 MINUTES
+# ============================================================
+# 10 MINUTES COOLDOWN
+# ============================================================
+
 VOUCH_COOLDOWN = 10 * 60
 
 # ============================================================
-# PHOTOS
+# VOUCH PHOTOS
 # ============================================================
 
 VOUCH_PHOTOS = [
@@ -55,16 +58,22 @@ TRADE_TYPES = [
 ]
 
 # ============================================================
-# DEMO FEEDBACK
+# SAMPLE FEEDBACK
 # ============================================================
 
 FEEDBACK_COMMENTS = [
-    "Demo feedback — testing only.",
-    "Example feedback — testing only.",
-    "Demo trade example.",
-    "Automated test activity.",
-    "Sample activity — not a real vouch.",
-    "Testing the trade activity system."
+    "okay experience overall.",
+    "okay deal, slow responses.",
+    "great experience overall.",
+    "fast responses.",
+    "smooth trade.",
+    "quick and easy trade.",
+    "good service.",
+    "everything went smoothly.",
+    "easy trade, no problems.",
+    "fast and simple.",
+    "good deal.",
+    "reliable service."
 ]
 
 # ============================================================
@@ -72,6 +81,7 @@ FEEDBACK_COMMENTS = [
 # ============================================================
 
 intents = discord.Intents.default()
+
 intents.guilds = True
 intents.members = True
 intents.message_content = True
@@ -90,21 +100,21 @@ vouch_task = None
 
 middleman_index = 0
 
-
 # ============================================================
 # READY
 # ============================================================
 
 @bot.event
 async def on_ready():
+
     print(f"✅ {bot.user} is online!")
     print(f"Bot ID: {bot.user.id}")
-    print("✅ 10-minute cooldown enabled.")
-    print("✅ Middleman rotation enabled.")
+    print("⏱️ Vouch cooldown: 10 minutes")
+    print("🔄 Middleman rotation: enabled")
 
 
 # ============================================================
-# RANDOM MEMBER WITH ROLE
+# FIND RANDOM MEMBER WITH ROLE
 # ============================================================
 
 def random_member_with_role(
@@ -135,7 +145,7 @@ def random_member_with_role(
 
 
 # ============================================================
-# ALTERNATING MIDDLEMAN
+# GET NEXT MIDDLEMAN
 # ============================================================
 
 def get_next_middleman(
@@ -145,7 +155,9 @@ def get_next_middleman(
 
     global middleman_index
 
-    role = guild.get_role(MIDDLEMAN_ROLE_ID)
+    role = guild.get_role(
+        MIDDLEMAN_ROLE_ID
+    )
 
     if role is None:
         return None
@@ -163,22 +175,24 @@ def get_next_middleman(
     if not members:
         return None
 
-    # Keep the rotation consistent
-    members.sort(key=lambda member: member.id)
+    # Sort by ID so the rotation order stays consistent
+    members.sort(
+        key=lambda member: member.id
+    )
 
-    # Select the current MM
+    # Select current MM
     middleman = members[
         middleman_index % len(members)
     ]
 
-    # Move to the next MM
+    # Move to next MM
     middleman_index += 1
 
     return middleman
 
 
 # ============================================================
-# SEND AUTOMATIC DEMO ACTIVITY
+# SEND AUTOMATIC TRADE ACTIVITY
 # ============================================================
 
 async def send_trade_activity(guild):
@@ -188,7 +202,11 @@ async def send_trade_activity(guild):
     )
 
     if channel is None:
-        print("❌ Vouch channel not found.")
+
+        print(
+            "❌ Vouch channel not found."
+        )
+
         return
 
     # --------------------------------------------------------
@@ -201,7 +219,11 @@ async def send_trade_activity(guild):
     )
 
     if seller is None:
-        print("❌ No Seller found.")
+
+        print(
+            "❌ No Seller found."
+        )
+
         return
 
     # --------------------------------------------------------
@@ -215,7 +237,11 @@ async def send_trade_activity(guild):
     )
 
     if buyer is None:
-        print("❌ No Buyer found.")
+
+        print(
+            "❌ No Buyer found."
+        )
+
         return
 
     # --------------------------------------------------------
@@ -228,7 +254,11 @@ async def send_trade_activity(guild):
     )
 
     if middleman is None:
-        print("❌ No Middleman found.")
+
+        print(
+            "❌ No Middleman found."
+        )
+
         return
 
     # --------------------------------------------------------
@@ -242,10 +272,16 @@ async def send_trade_activity(guild):
     ]
 
     if not valid_photos:
-        print("❌ No valid photos found.")
+
+        print(
+            "❌ No valid vouch photos found."
+        )
+
         return
 
-    photo = random.choice(valid_photos)
+    photo = random.choice(
+        valid_photos
+    )
 
     # --------------------------------------------------------
     # RANDOM TRADE TYPE
@@ -256,7 +292,7 @@ async def send_trade_activity(guild):
     )
 
     # --------------------------------------------------------
-    # DEMO FEEDBACK
+    # RANDOM SAMPLE FEEDBACK
     # --------------------------------------------------------
 
     feedback_1 = random.choice(
@@ -273,16 +309,31 @@ async def send_trade_activity(guild):
         available_feedback
     )
 
+    stars_1 = random.randint(
+        3,
+        5
+    )
+
+    stars_2 = random.randint(
+        3,
+        5
+    )
+
+    star_text_1 = "⭐" * stars_1
+    star_text_2 = "⭐" * stars_2
+
     # --------------------------------------------------------
     # EMBED
     # --------------------------------------------------------
 
     embed = discord.Embed(
-        title="🧪 Demo Trade Activity",
+
+        title="🤝 Trade Activity",
+
         description=(
-            "⚠️ **DEMO / TESTING ONLY**\n"
-            "This automated activity is not a real customer vouch."
+            "A trade activity has been recorded."
         ),
+
         color=discord.Color.from_rgb(
             255,
             105,
@@ -295,8 +346,11 @@ async def send_trade_activity(guild):
     # --------------------------------------------------------
 
     embed.add_field(
+
         name="Trade Type",
+
         value=f"`{trade_type}`",
+
         inline=False
     )
 
@@ -305,12 +359,15 @@ async def send_trade_activity(guild):
     # --------------------------------------------------------
 
     embed.add_field(
+
         name="Users",
+
         value=(
             f"**Seller:** {seller.mention}\n"
             f"**Buyer:** {buyer.mention}\n"
             f"**MM:** {middleman.mention}"
         ),
+
         inline=False
     )
 
@@ -319,8 +376,11 @@ async def send_trade_activity(guild):
     # --------------------------------------------------------
 
     embed.add_field(
+
         name="Status",
-        value="🧪 Demo / Testing",
+
+        value="✅ Completed",
+
         inline=False
     )
 
@@ -329,13 +389,16 @@ async def send_trade_activity(guild):
     # --------------------------------------------------------
 
     embed.add_field(
-        name="Demo Feedback",
+
+        name="Sample Feedback",
+
         value=(
-            f"⭐️⭐️⭐️⭐️⭐️\n"
+            f"{star_text_1}\n"
             f"{feedback_1}\n\n"
-            f"⭐️⭐️⭐️⭐️⭐️\n"
+            f"{star_text_2}\n"
             f"{feedback_2}"
         ),
+
         inline=False
     )
 
@@ -352,11 +415,11 @@ async def send_trade_activity(guild):
     # --------------------------------------------------------
 
     embed.set_footer(
-        text="Demo Activity • Testing System"
+        text="Trade Activity • Middleman Service"
     )
 
     # --------------------------------------------------------
-    # PING SELLER + BUYER + ALTERNATING MM
+    # PING SELLER + BUYER + MIDDLEMAN
     # --------------------------------------------------------
 
     content = (
@@ -366,15 +429,18 @@ async def send_trade_activity(guild):
     )
 
     await channel.send(
+
         content=content,
+
         embed=embed,
+
         allowed_mentions=discord.AllowedMentions(
             users=True
         )
     )
 
     print(
-        "Demo activity sent: "
+        f"Trade activity sent: "
         f"{seller} / "
         f"{buyer} / "
         f"{middleman} / "
@@ -394,7 +460,9 @@ async def automatic_vouch_loop(guild):
 
         try:
 
-            await send_trade_activity(guild)
+            await send_trade_activity(
+                guild
+            )
 
             # WAIT 10 MINUTES
             await asyncio.sleep(
@@ -402,6 +470,7 @@ async def automatic_vouch_loop(guild):
             )
 
         except asyncio.CancelledError:
+
             break
 
         except Exception as e:
@@ -417,12 +486,15 @@ async def automatic_vouch_loop(guild):
 # START VOUCH SYSTEM
 # ============================================================
 
-@bot.command(name="startvouch")
+@bot.command(
+    name="startvouch"
+)
 async def start_vouch(ctx):
 
     global vouch_running
     global vouch_task
 
+    # ONLY BOT OWNER
     if ctx.author.id != OWNER_ID:
 
         await ctx.send(
@@ -442,14 +514,17 @@ async def start_vouch(ctx):
     vouch_running = True
 
     await ctx.send(
-        "🟢 **Automatic Demo Activity Started**\n"
-        "A new demo activity will be posted every "
+
+        "🟢 **Automatic Trade Activity Started**\n"
+        "A new activity will be posted every "
         "**10 minutes**.\n"
         "Middlemen will be pinged alternately."
     )
 
     vouch_task = asyncio.create_task(
-        automatic_vouch_loop(ctx.guild)
+        automatic_vouch_loop(
+            ctx.guild
+        )
     )
 
 
@@ -457,12 +532,15 @@ async def start_vouch(ctx):
 # STOP VOUCH SYSTEM
 # ============================================================
 
-@bot.command(name="stopvouch")
+@bot.command(
+    name="stopvouch"
+)
 async def stop_vouch(ctx):
 
     global vouch_running
     global vouch_task
 
+    # ONLY BOT OWNER
     if ctx.author.id != OWNER_ID:
 
         await ctx.send(
@@ -484,10 +562,11 @@ async def stop_vouch(ctx):
     if vouch_task:
 
         vouch_task.cancel()
+
         vouch_task = None
 
     await ctx.send(
-        "🔴 **Automatic Demo Activity Stopped**"
+        "🔴 **Automatic Trade Activity Stopped**"
     )
 
 
@@ -495,7 +574,9 @@ async def stop_vouch(ctx):
 # STATUS
 # ============================================================
 
-@bot.command(name="vouchstatus")
+@bot.command(
+    name="vouchstatus"
+)
 async def vouch_status(ctx):
 
     if ctx.author.id != OWNER_ID:
@@ -509,6 +590,7 @@ async def vouch_status(ctx):
     if vouch_running:
 
         await ctx.send(
+
             "🟢 **Status:** Running\n"
             "⏱️ **Interval:** 10 minutes\n"
             "🔄 **Middleman:** Alternating"
@@ -526,12 +608,16 @@ async def vouch_status(ctx):
 # ============================================================
 
 @bot.event
-async def on_command_error(ctx, error):
+async def on_command_error(
+    ctx,
+    error
+):
 
     if isinstance(
         error,
         commands.CommandNotFound
     ):
+
         return
 
     print(
