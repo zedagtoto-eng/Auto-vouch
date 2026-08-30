@@ -35,7 +35,7 @@ VOUCH_COOLDOWN = 10 * 60
 # PERMANENT VOUCH PHOTO FILE
 # ============================================================
 
-VOUCH_PHOTOS_FILE = "vouch_photos.json"
+VOUCH_PHOTOS_FILE = "/app/data/vouch_photos.json"
 
 # ============================================================
 # VOUCH PHOTOS - 26 TOTAL
