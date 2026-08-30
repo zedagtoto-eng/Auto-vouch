@@ -29,7 +29,7 @@ VOUCH_CHANNEL_ID = 1541096647218692176
 # 10 MINUTES COOLDOWN
 # ============================================================
 
-VOUCH_COOLDOWN = 10 * 60
+VOUCH_COOLDOWN = 20 * 60
 
 # ============================================================
 # PERMANENT VOUCH PHOTO FILE
