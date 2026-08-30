@@ -19,6 +19,9 @@ SELLER_ROLE_ID = 1541096480146853968
 BUYER_ROLE_ID = 1541096480146853968
 MIDDLEMAN_ROLE_ID = 1541096469669351424
 
+# OWNER ROLE - REQUIRED FOR $VOUCHPIC
+OWNER_ROLE_ID = 1541779938930065498
+
 # CHANNEL WHERE THE AUTOMATIC POSTS GO
 VOUCH_CHANNEL_ID = 1541096647218692176
 
@@ -212,7 +215,9 @@ async def on_ready():
     print(f"Bot ID: {bot.user.id}")
     print("⏱️ Vouch cooldown: 10 minutes")
     print("🔄 Middleman rotation: enabled")
-    print(f"📸 Vouch photos loaded: {len(VOUCH_PHOTOS)}")
+    print(
+        f"📸 Vouch photos loaded: {len(VOUCH_PHOTOS)}"
+    )
 
 
 # ============================================================
@@ -708,6 +713,7 @@ async def vouch_status(ctx):
 
 # ============================================================
 # ADD PERMANENT VOUCH PICTURE
+# OWNER ROLE ONLY
 # ============================================================
 
 @bot.command(
@@ -715,16 +721,34 @@ async def vouch_status(ctx):
 )
 async def vouchpic(ctx):
 
-    # ONLY BOT OWNER
-    if ctx.author.id != OWNER_ID:
+    # --------------------------------------------------------
+    # CHECK OWNER ROLE
+    # --------------------------------------------------------
+
+    owner_role = ctx.guild.get_role(
+        OWNER_ROLE_ID
+    )
+
+    if owner_role is None:
 
         await ctx.send(
-            "❌ Only the bot owner can use this command."
+            "❌ Owner role not found."
         )
 
         return
 
+    if owner_role not in ctx.author.roles:
+
+        await ctx.send(
+            "❌ Only members with the **Owner** role can use this command."
+        )
+
+        return
+
+    # --------------------------------------------------------
     # CHECK ATTACHMENT
+    # --------------------------------------------------------
+
     if not ctx.message.attachments:
 
         await ctx.send(
@@ -736,7 +760,10 @@ async def vouchpic(ctx):
 
     attachment = ctx.message.attachments[0]
 
+    # --------------------------------------------------------
     # CHECK IMAGE
+    # --------------------------------------------------------
+
     if (
         not attachment.content_type
         or not attachment.content_type.startswith("image/")
@@ -748,7 +775,10 @@ async def vouchpic(ctx):
 
         return
 
+    # --------------------------------------------------------
     # PREVENT DUPLICATES
+    # --------------------------------------------------------
+
     if attachment.url in VOUCH_PHOTOS:
 
         await ctx.send(
@@ -757,13 +787,23 @@ async def vouchpic(ctx):
 
         return
 
-    # ADD TO LIST
+    # --------------------------------------------------------
+    # ADD PHOTO
+    # --------------------------------------------------------
+
     VOUCH_PHOTOS.append(
         attachment.url
     )
 
+    # --------------------------------------------------------
     # SAVE PERMANENTLY
+    # --------------------------------------------------------
+
     save_vouch_photos()
+
+    # --------------------------------------------------------
+    # CONFIRM
+    # --------------------------------------------------------
 
     await ctx.send(
 
