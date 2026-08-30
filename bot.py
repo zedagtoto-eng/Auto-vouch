@@ -282,17 +282,14 @@ def get_next_middleman(
     if not members:
         return None
 
-    # Sort by ID so the rotation order stays consistent
     members.sort(
         key=lambda member: member.id
     )
 
-    # Select current MM
     middleman = members[
         middleman_index % len(members)
     ]
 
-    # Move to next MM
     middleman_index += 1
 
     return middleman
@@ -571,7 +568,6 @@ async def automatic_vouch_loop(guild):
                 guild
             )
 
-            # WAIT 10 MINUTES
             await asyncio.sleep(
                 VOUCH_COOLDOWN
             )
