@@ -1,6 +1,7 @@
 import os
 import asyncio
 import random
+import json
 import discord
 from discord.ext import commands
 
@@ -28,7 +29,13 @@ VOUCH_CHANNEL_ID = 1541096647218692176
 VOUCH_COOLDOWN = 10 * 60
 
 # ============================================================
-# VOUCH PHOTOS
+# PERMANENT VOUCH PHOTO FILE
+# ============================================================
+
+VOUCH_PHOTOS_FILE = "vouch_photos.json"
+
+# ============================================================
+# VOUCH PHOTOS - 26 TOTAL
 # ============================================================
 
 VOUCH_PHOTOS = [
@@ -41,8 +48,102 @@ VOUCH_PHOTOS = [
     "https://i.imgur.com/7SUZCY8.png",
     "https://i.imgur.com/h1wbgMx.png",
     "https://i.imgur.com/OJZPuds.png",
-    "https://i.imgur.com/YT57LBt.png"
+    "https://i.imgur.com/YT57LBt.png",
+
+    "https://i.imgur.com/epPTBBA.png",
+    "https://i.imgur.com/IOmc9Ry.png",
+    "https://i.imgur.com/Jv6vJvd.png",
+    "https://i.imgur.com/HgxkgRQ.png",
+    "https://i.imgur.com/h6gCX9L.png",
+    "https://i.imgur.com/iZGKoTg.png",
+    "https://i.imgur.com/v8CYWgo.png",
+    "https://i.imgur.com/awLPcEG.png",
+    "https://i.imgur.com/vGYOIlM.png",
+    "https://i.imgur.com/JNfCO5b.png",
+    "https://i.imgur.com/sN52n9r.png",
+    "https://i.imgur.com/HKbvv9G.png",
+    "https://i.imgur.com/h1WWmDF.png",
+    "https://i.imgur.com/kj6NSof.png",
+    "https://i.imgur.com/fL2fDbr.png",
+    "https://i.imgur.com/Es7MsLb.png"
 ]
+
+# ============================================================
+# LOAD SAVED VOUCH PHOTOS
+# ============================================================
+
+def load_vouch_photos():
+
+    global VOUCH_PHOTOS
+
+    try:
+
+        if os.path.exists(VOUCH_PHOTOS_FILE):
+
+            with open(
+                VOUCH_PHOTOS_FILE,
+                "r",
+                encoding="utf-8"
+            ) as file:
+
+                saved_photos = json.load(file)
+
+            if isinstance(saved_photos, list):
+
+                for photo in saved_photos:
+
+                    if (
+                        isinstance(photo, str)
+                        and photo.startswith("http")
+                        and photo not in VOUCH_PHOTOS
+                    ):
+
+                        VOUCH_PHOTOS.append(photo)
+
+                print(
+                    f"📸 Loaded {len(saved_photos)} saved vouch photos."
+                )
+
+    except Exception as e:
+
+        print(
+            f"❌ Could not load vouch photos: {e}"
+        )
+
+
+# ============================================================
+# SAVE VOUCH PHOTOS
+# ============================================================
+
+def save_vouch_photos():
+
+    try:
+
+        with open(
+            VOUCH_PHOTOS_FILE,
+            "w",
+            encoding="utf-8"
+        ) as file:
+
+            json.dump(
+                VOUCH_PHOTOS,
+                file,
+                indent=4
+            )
+
+        print(
+            f"💾 Saved {len(VOUCH_PHOTOS)} vouch photos."
+        )
+
+    except Exception as e:
+
+        print(
+            f"❌ Could not save vouch photos: {e}"
+        )
+
+
+# Load saved pictures when bot starts
+load_vouch_photos()
 
 # ============================================================
 # TRADE TYPES
@@ -87,7 +188,7 @@ intents.members = True
 intents.message_content = True
 
 bot = commands.Bot(
-    command_prefix="!",
+    command_prefix="$",
     intents=intents
 )
 
@@ -111,6 +212,7 @@ async def on_ready():
     print(f"Bot ID: {bot.user.id}")
     print("⏱️ Vouch cooldown: 10 minutes")
     print("🔄 Middleman rotation: enabled")
+    print(f"📸 Vouch photos loaded: {len(VOUCH_PHOTOS)}")
 
 
 # ============================================================
@@ -593,7 +695,8 @@ async def vouch_status(ctx):
 
             "🟢 **Status:** Running\n"
             "⏱️ **Interval:** 10 minutes\n"
-            "🔄 **Middleman:** Alternating"
+            "🔄 **Middleman:** Alternating\n"
+            f"📸 **Vouch Photos:** {len(VOUCH_PHOTOS)}"
         )
 
     else:
@@ -601,6 +704,78 @@ async def vouch_status(ctx):
         await ctx.send(
             "🔴 **Status:** Stopped"
         )
+
+
+# ============================================================
+# ADD PERMANENT VOUCH PICTURE
+# ============================================================
+
+@bot.command(
+    name="vouchpic"
+)
+async def vouchpic(ctx):
+
+    # ONLY BOT OWNER
+    if ctx.author.id != OWNER_ID:
+
+        await ctx.send(
+            "❌ Only the bot owner can use this command."
+        )
+
+        return
+
+    # CHECK ATTACHMENT
+    if not ctx.message.attachments:
+
+        await ctx.send(
+            "❌ Please attach a picture.\n"
+            "Example: `$vouchpic` and attach the picture."
+        )
+
+        return
+
+    attachment = ctx.message.attachments[0]
+
+    # CHECK IMAGE
+    if (
+        not attachment.content_type
+        or not attachment.content_type.startswith("image/")
+    ):
+
+        await ctx.send(
+            "❌ The attachment must be an image."
+        )
+
+        return
+
+    # PREVENT DUPLICATES
+    if attachment.url in VOUCH_PHOTOS:
+
+        await ctx.send(
+            "⚠️ That picture is already in the vouch picture list."
+        )
+
+        return
+
+    # ADD TO LIST
+    VOUCH_PHOTOS.append(
+        attachment.url
+    )
+
+    # SAVE PERMANENTLY
+    save_vouch_photos()
+
+    await ctx.send(
+
+        "✅ **Vouch picture added!**\n"
+        f"📸 Total vouch pictures: **{len(VOUCH_PHOTOS)}**\n"
+        "💾 The picture has been permanently saved."
+    )
+
+    print(
+        f"Vouch picture added by {ctx.author}: "
+        f"{attachment.url}"
+    )
 
 
 # ============================================================
