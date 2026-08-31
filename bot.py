@@ -19,7 +19,7 @@ SELLER_ROLE_ID = 1541096480146853968
 BUYER_ROLE_ID = 1541096480146853968
 MIDDLEMAN_ROLE_ID = 1541096469669351424
 
-# OWNER ROLE - REQUIRED FOR $VOUCHPIC
+# OWNER ROLE
 OWNER_ROLE_ID = 1541779938930065498
 
 # CHANNEL WHERE THE AUTOMATIC POSTS GO
@@ -587,6 +587,7 @@ async def automatic_vouch_loop(guild):
 
 # ============================================================
 # START VOUCH SYSTEM
+# OWNER ROLE ONLY
 # ============================================================
 
 @bot.command(
@@ -597,14 +598,33 @@ async def start_vouch(ctx):
     global vouch_running
     global vouch_task
 
-    # ONLY BOT OWNER
-    if ctx.author.id != OWNER_ID:
+    # --------------------------------------------------------
+    # CHECK OWNER ROLE
+    # --------------------------------------------------------
+
+    owner_role = ctx.guild.get_role(
+        OWNER_ROLE_ID
+    )
+
+    if owner_role is None:
 
         await ctx.send(
-            "❌ Only the bot owner can use this command."
+            "❌ Owner role not found."
         )
 
         return
+
+    if owner_role not in ctx.author.roles:
+
+        await ctx.send(
+            "❌ Only members with the **Owner** role can use this command."
+        )
+
+        return
+
+    # --------------------------------------------------------
+    # CHECK STATUS
+    # --------------------------------------------------------
 
     if vouch_running:
 
@@ -613,6 +633,10 @@ async def start_vouch(ctx):
         )
 
         return
+
+    # --------------------------------------------------------
+    # START
+    # --------------------------------------------------------
 
     vouch_running = True
 
@@ -633,6 +657,7 @@ async def start_vouch(ctx):
 
 # ============================================================
 # STOP VOUCH SYSTEM
+# OWNER ROLE ONLY
 # ============================================================
 
 @bot.command(
@@ -643,14 +668,33 @@ async def stop_vouch(ctx):
     global vouch_running
     global vouch_task
 
-    # ONLY BOT OWNER
-    if ctx.author.id != OWNER_ID:
+    # --------------------------------------------------------
+    # CHECK OWNER ROLE
+    # --------------------------------------------------------
+
+    owner_role = ctx.guild.get_role(
+        OWNER_ROLE_ID
+    )
+
+    if owner_role is None:
 
         await ctx.send(
-            "❌ Only the bot owner can use this command."
+            "❌ Owner role not found."
         )
 
         return
+
+    if owner_role not in ctx.author.roles:
+
+        await ctx.send(
+            "❌ Only members with the **Owner** role can use this command."
+        )
+
+        return
+
+    # --------------------------------------------------------
+    # CHECK STATUS
+    # --------------------------------------------------------
 
     if not vouch_running:
 
@@ -659,6 +703,10 @@ async def stop_vouch(ctx):
         )
 
         return
+
+    # --------------------------------------------------------
+    # STOP
+    # --------------------------------------------------------
 
     vouch_running = False
 
@@ -675,6 +723,7 @@ async def stop_vouch(ctx):
 
 # ============================================================
 # STATUS
+# OWNER ROLE ONLY
 # ============================================================
 
 @bot.command(
@@ -682,13 +731,33 @@ async def stop_vouch(ctx):
 )
 async def vouch_status(ctx):
 
-    if ctx.author.id != OWNER_ID:
+    # --------------------------------------------------------
+    # CHECK OWNER ROLE
+    # --------------------------------------------------------
+
+    owner_role = ctx.guild.get_role(
+        OWNER_ROLE_ID
+    )
+
+    if owner_role is None:
 
         await ctx.send(
-            "❌ Only the bot owner can use this command."
+            "❌ Owner role not found."
         )
 
         return
+
+    if owner_role not in ctx.author.roles:
+
+        await ctx.send(
+            "❌ Only members with the **Owner** role can use this command."
+        )
+
+        return
+
+    # --------------------------------------------------------
+    # STATUS
+    # --------------------------------------------------------
 
     if vouch_running:
 
