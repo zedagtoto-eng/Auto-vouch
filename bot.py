@@ -448,7 +448,7 @@ async def send_trade_activity(guild):
 
     embed.add_field(
         name="**Trade Type**\n",
-        value=f"`{trade_type}`"\n\n",
+        value=f"`{trade_type}`\n\n",
         inline=False
     )
 
