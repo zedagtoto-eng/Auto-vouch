@@ -448,7 +448,7 @@ async def send_trade_activity(guild):
 
     embed.add_field(
         name="**Trade Type**\n",
-        value=f"`{trade_type}`\n\n",
+        value=f"`{trade_type}`\n\n\n",
         inline=False
     )
 
@@ -461,7 +461,7 @@ async def send_trade_activity(guild):
         value=(
             f"**Seller:** {seller.mention}\n"
             f"**Buyer:** {buyer.mention}\n"
-            f"**MM:** {middleman.mention}\n\n"
+            f"**MM:** {middleman.mention}\n\n\n"
         ),
         inline=False
     )
