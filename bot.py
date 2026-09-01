@@ -427,8 +427,8 @@ async def send_trade_activity(guild):
         5
     )
 
-    star_text_1 = "<:starz:1544307175340511285>" * 
-    star_text_2 = "<:starz:1544307175340511285>" * 
+    star_text_1 = STAR_EMOJI * stars_1
+    star_text_2 = STAR_EMOJI * stars_2
 
     # --------------------------------------------------------
     # EMBED
@@ -436,8 +436,8 @@ async def send_trade_activity(guild):
 
     embed = discord.Embed(
 
-        title="<:check:1544306907768946780> Verified Vouch",
-        
+        title=f"{CHECK_EMOJI} Verified Vouch",
+
         color=discord.Color.from_rgb(
             255,
             105,
@@ -475,8 +475,6 @@ async def send_trade_activity(guild):
         inline=False
     )
 
-
-
     # --------------------------------------------------------
     # FEEDBACK
     # --------------------------------------------------------
@@ -503,7 +501,6 @@ async def send_trade_activity(guild):
         url=photo
     )
 
-   
     # --------------------------------------------------------
     # PING SELLER + BUYER + MIDDLEMAN
     # --------------------------------------------------------
@@ -704,7 +701,7 @@ async def stop_vouch(ctx):
 
 
 # ============================================================
-# STATUS
+# STATUS COMMAND
 # OWNER ROLE ONLY
 # ============================================================
 
