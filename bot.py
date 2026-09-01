@@ -25,6 +25,10 @@ OWNER_ROLE_ID = 1541779938930065498
 # CHANNEL WHERE THE AUTOMATIC POSTS GO
 VOUCH_CHANNEL_ID = 1541096647218692176
 
+# CUSTOM EMOJIS
+STAR_EMOJI = "<:starz:1544307175340511285>"
+CHECK_EMOJI = "<:check:1544306907768946780>"
+
 # ============================================================
 # 10 MINUTES COOLDOWN
 # ============================================================
@@ -423,8 +427,8 @@ async def send_trade_activity(guild):
         5
     )
 
-    star_text_1 = "⭐" * stars_1
-    star_text_2 = "⭐" * stars_2
+    star_text_1 = "<:starz:1544307175340511285>" * 
+    star_text_2 = "<:starz:1544307175340511285>" * 
 
     # --------------------------------------------------------
     # EMBED
@@ -432,12 +436,8 @@ async def send_trade_activity(guild):
 
     embed = discord.Embed(
 
-        title="🤝 Trade Activity",
-
-        description=(
-            "A trade activity has been recorded."
-        ),
-
+        title="<:check:1544306907768946780> Verified Vouch",
+        
         color=discord.Color.from_rgb(
             255,
             105,
@@ -475,18 +475,7 @@ async def send_trade_activity(guild):
         inline=False
     )
 
-    # --------------------------------------------------------
-    # STATUS
-    # --------------------------------------------------------
 
-    embed.add_field(
-
-        name="Status",
-
-        value="✅ Completed",
-
-        inline=False
-    )
 
     # --------------------------------------------------------
     # FEEDBACK
@@ -494,7 +483,7 @@ async def send_trade_activity(guild):
 
     embed.add_field(
 
-        name="Sample Feedback",
+        name="Feedback",
 
         value=(
             f"{star_text_1}\n"
@@ -514,14 +503,7 @@ async def send_trade_activity(guild):
         url=photo
     )
 
-    # --------------------------------------------------------
-    # FOOTER
-    # --------------------------------------------------------
-
-    embed.set_footer(
-        text="Trade Activity • Middleman Service"
-    )
-
+   
     # --------------------------------------------------------
     # PING SELLER + BUYER + MIDDLEMAN
     # --------------------------------------------------------
