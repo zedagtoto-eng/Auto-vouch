@@ -56,7 +56,6 @@ VOUCH_PHOTOS = [
     "https://i.imgur.com/h1wbgMx.png",
     "https://i.imgur.com/OJZPuds.png",
     "https://i.imgur.com/YT57LBt.png",
-
     "https://i.imgur.com/epPTBBA.png",
     "https://i.imgur.com/IOmc9Ry.png",
     "https://i.imgur.com/Jv6vJvd.png",
@@ -435,9 +434,7 @@ async def send_trade_activity(guild):
     # --------------------------------------------------------
 
     embed = discord.Embed(
-
         title=f"{CHECK_EMOJI} Verified Vouch",
-
         color=discord.Color.from_rgb(
             255,
             105,
@@ -450,11 +447,15 @@ async def send_trade_activity(guild):
     # --------------------------------------------------------
 
     embed.add_field(
-
         name="Trade Type",
-
         value=f"`{trade_type}`",
+        inline=False
+    )
 
+    # EXTRA SPACING
+    embed.add_field(
+        name="\u200b",
+        value="\u200b",
         inline=False
     )
 
@@ -463,15 +464,19 @@ async def send_trade_activity(guild):
     # --------------------------------------------------------
 
     embed.add_field(
-
         name="Users",
-
         value=(
             f"**Seller:** {seller.mention}\n"
             f"**Buyer:** {buyer.mention}\n"
             f"**MM:** {middleman.mention}"
         ),
+        inline=False
+    )
 
+    # EXTRA SPACING
+    embed.add_field(
+        name="\u200b",
+        value="\u200b",
         inline=False
     )
 
@@ -480,16 +485,13 @@ async def send_trade_activity(guild):
     # --------------------------------------------------------
 
     embed.add_field(
-
         name="Feedback",
-
         value=(
             f"{star_text_1}\n"
             f"{feedback_1}\n\n"
             f"{star_text_2}\n"
             f"{feedback_2}"
         ),
-
         inline=False
     )
 
@@ -512,11 +514,8 @@ async def send_trade_activity(guild):
     )
 
     await channel.send(
-
         content=content,
-
         embed=embed,
-
         allowed_mentions=discord.AllowedMentions(
             users=True
         )
@@ -620,7 +619,6 @@ async def start_vouch(ctx):
     vouch_running = True
 
     await ctx.send(
-
         "🟢 **Automatic Trade Activity Started**\n"
         "A new activity will be posted every "
         "**10 minutes**.\n"
@@ -701,7 +699,7 @@ async def stop_vouch(ctx):
 
 
 # ============================================================
-# STATUS COMMAND
+# STATUS
 # OWNER ROLE ONLY
 # ============================================================
 
@@ -741,7 +739,6 @@ async def vouch_status(ctx):
     if vouch_running:
 
         await ctx.send(
-
             "🟢 **Status:** Running\n"
             "⏱️ **Interval:** 10 minutes\n"
             "🔄 **Middleman:** Alternating\n"
@@ -850,7 +847,6 @@ async def vouchpic(ctx):
     # --------------------------------------------------------
 
     await ctx.send(
-
         "✅ **Vouch picture added!**\n"
         f"📸 Total vouch pictures: **{len(VOUCH_PHOTOS)}**\n"
         "💾 The picture has been permanently saved."
