@@ -447,8 +447,8 @@ async def send_trade_activity(guild):
     # --------------------------------------------------------
 
     embed.add_field(
-        name="Trade Type",
-        value=f"`{trade_type}'\n\u200b",
+        name="**Trade Type**\n"
+        value=f"`{trade_type}`"\n\n"
         inline=False
     )
 
@@ -456,18 +456,15 @@ async def send_trade_activity(guild):
     # USERS
     # --------------------------------------------------------
 
-    
-
-embed.add_field(
-    name="Users",
-    value=(
-        f"**Seller:** {seller.mention}\n"
-        f"**Buyer:** {buyer.mention}\n"
-        f"**MM:** {middleman.mention}\n"
-        f"\u200b"
-    ),
-   inline=False
-)
+    embed.add_field(
+        name="Users",
+        value=(
+            f"**Seller:** {seller.mention}\n"
+            f"**Buyer:** {buyer.mention}\n"
+            f"**MM:** {middleman.mention}\n\n"
+        ),
+        inline=False
+    )
 
     # --------------------------------------------------------
     # FEEDBACK
