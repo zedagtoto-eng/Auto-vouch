@@ -451,14 +451,7 @@ async def send_trade_activity(guild):
         value=f"`{trade_type}`",
         inline=False
     )
-
-    # EXTRA SPACING
-    embed.add_field(
-        name="\u200b",
-        value="\u200b",
-        inline=False
-    )
-
+    
     # --------------------------------------------------------
     # USERS
     # --------------------------------------------------------
@@ -472,14 +465,7 @@ async def send_trade_activity(guild):
         ),
         inline=False
     )
-
-    # EXTRA SPACING
-    embed.add_field(
-        name="\u200b",
-        value="\u200b",
-        inline=False
-    )
-
+    
     # --------------------------------------------------------
     # FEEDBACK
     # --------------------------------------------------------
