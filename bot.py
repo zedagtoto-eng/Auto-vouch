@@ -466,7 +466,7 @@ embed.add_field(
         f"**MM:** {middleman.mention}\n"
         f"\u200b"
     ),
-        inline=False
+   inline=False
     )
 
     # --------------------------------------------------------
