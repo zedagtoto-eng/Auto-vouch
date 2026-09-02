@@ -11,7 +11,6 @@ from discord.ext import commands
 
 TOKEN = os.getenv("DISCORD_TOKEN")
 
-# YOUR DISCORD USER ID
 OWNER_ID = 494442502632243200
 
 # ROLE IDS
@@ -148,7 +147,6 @@ def save_vouch_photos():
         )
 
 
-# Load saved pictures when bot starts
 load_vouch_photos()
 
 # ============================================================
@@ -442,45 +440,45 @@ async def send_trade_activity(guild):
         )
     )
 
-   # --------------------------------------------------------
-   # TRADE TYPE
-   # --------------------------------------------------------
+    # --------------------------------------------------------
+    # TRADE TYPE
+    # --------------------------------------------------------
 
-   embed.add_field(
-       name="Trade Type",
-       value=f"`{trade_type}`",
-       inline=False
-   )
+    embed.add_field(
+        name="Trade Type",
+        value=f"`{trade_type}`",
+        inline=False
+    )
 
-   # --------------------------------------------------------
-   # USERS
-   # --------------------------------------------------------
+    # --------------------------------------------------------
+    # USERS
+    # --------------------------------------------------------
 
-   embed.add_field(
-       name="Users",
-       value=(
-           "\n"
-           f"**Seller:** {seller.mention}\n"
-           f"**Buyer:** {buyer.mention}\n"
-           f"**MM:** {middleman.mention}"
-       ),
-       inline=False
-   )
+    embed.add_field(
+        name="Users",
+        value=(
+            "\n"
+            f"**Seller:** {seller.mention}\n"
+            f"**Buyer:** {buyer.mention}\n"
+            f"**MM:** {middleman.mention}"
+        ),
+        inline=False
+    )
 
-   # --------------------------------------------------------
-   # FEEDBACK
-   # --------------------------------------------------------
+    # --------------------------------------------------------
+    # FEEDBACK
+    # --------------------------------------------------------
 
-   embed.add_field(
-       name="Feedback",
-       value=(
-           "\n"
-           f"{star_text_1}\n"
-           f"{feedback_1}\n\n"
-           f"{star_text_2}\n"
-           f"{feedback_2}"
-       ),
-       inline=False
+    embed.add_field(
+        name="Feedback",
+        value=(
+            "\n"
+            f"{star_text_1}\n"
+            f"{feedback_1}\n\n"
+            f"{star_text_2}\n"
+            f"{feedback_2}"
+        ),
+        inline=False
     )
 
     # --------------------------------------------------------
@@ -564,10 +562,6 @@ async def start_vouch(ctx):
     global vouch_running
     global vouch_task
 
-    # --------------------------------------------------------
-    # CHECK OWNER ROLE
-    # --------------------------------------------------------
-
     owner_role = ctx.guild.get_role(
         OWNER_ROLE_ID
     )
@@ -588,10 +582,6 @@ async def start_vouch(ctx):
 
         return
 
-    # --------------------------------------------------------
-    # CHECK STATUS
-    # --------------------------------------------------------
-
     if vouch_running:
 
         await ctx.send(
@@ -599,10 +589,6 @@ async def start_vouch(ctx):
         )
 
         return
-
-    # --------------------------------------------------------
-    # START
-    # --------------------------------------------------------
 
     vouch_running = True
 
@@ -633,10 +619,6 @@ async def stop_vouch(ctx):
     global vouch_running
     global vouch_task
 
-    # --------------------------------------------------------
-    # CHECK OWNER ROLE
-    # --------------------------------------------------------
-
     owner_role = ctx.guild.get_role(
         OWNER_ROLE_ID
     )
@@ -657,10 +639,6 @@ async def stop_vouch(ctx):
 
         return
 
-    # --------------------------------------------------------
-    # CHECK STATUS
-    # --------------------------------------------------------
-
     if not vouch_running:
 
         await ctx.send(
@@ -668,10 +646,6 @@ async def stop_vouch(ctx):
         )
 
         return
-
-    # --------------------------------------------------------
-    # STOP
-    # --------------------------------------------------------
 
     vouch_running = False
 
@@ -696,10 +670,6 @@ async def stop_vouch(ctx):
 )
 async def vouch_status(ctx):
 
-    # --------------------------------------------------------
-    # CHECK OWNER ROLE
-    # --------------------------------------------------------
-
     owner_role = ctx.guild.get_role(
         OWNER_ROLE_ID
     )
@@ -719,10 +689,6 @@ async def vouch_status(ctx):
         )
 
         return
-
-    # --------------------------------------------------------
-    # STATUS
-    # --------------------------------------------------------
 
     if vouch_running:
 
@@ -750,10 +716,6 @@ async def vouch_status(ctx):
 )
 async def vouchpic(ctx):
 
-    # --------------------------------------------------------
-    # CHECK OWNER ROLE
-    # --------------------------------------------------------
-
     owner_role = ctx.guild.get_role(
         OWNER_ROLE_ID
     )
@@ -774,10 +736,6 @@ async def vouchpic(ctx):
 
         return
 
-    # --------------------------------------------------------
-    # CHECK ATTACHMENT
-    # --------------------------------------------------------
-
     if not ctx.message.attachments:
 
         await ctx.send(
@@ -788,10 +746,6 @@ async def vouchpic(ctx):
         return
 
     attachment = ctx.message.attachments[0]
-
-    # --------------------------------------------------------
-    # CHECK IMAGE
-    # --------------------------------------------------------
 
     if (
         not attachment.content_type
@@ -804,10 +758,6 @@ async def vouchpic(ctx):
 
         return
 
-    # --------------------------------------------------------
-    # PREVENT DUPLICATES
-    # --------------------------------------------------------
-
     if attachment.url in VOUCH_PHOTOS:
 
         await ctx.send(
@@ -816,23 +766,11 @@ async def vouchpic(ctx):
 
         return
 
-    # --------------------------------------------------------
-    # ADD PHOTO
-    # --------------------------------------------------------
-
     VOUCH_PHOTOS.append(
         attachment.url
     )
 
-    # --------------------------------------------------------
-    # SAVE PERMANENTLY
-    # --------------------------------------------------------
-
     save_vouch_photos()
-
-    # --------------------------------------------------------
-    # CONFIRM
-    # --------------------------------------------------------
 
     await ctx.send(
         "✅ **Vouch picture added!**\n"
