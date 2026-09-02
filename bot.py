@@ -458,9 +458,9 @@ async def send_trade_activity(guild):
         name="Users",
         value=(
             "\n"
-            f"**Seller:** {seller.mention}\n"
-            f"**Buyer:** {buyer.mention}\n"
-            f"**MM:** {middleman.mention}"
+            f"Seller: {seller.mention}\n"
+            f"Buyer: {buyer.mention}\n"
+            f"MM: {middleman.mention}\n\n"
         ),
         inline=False
     )
